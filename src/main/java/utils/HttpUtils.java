@@ -66,7 +66,7 @@ public class HttpUtils {
     }
 
     public static FluctuationDTO getFluctuationRates(String from, String to, String valuta)throws IOException{
-        String params = "?start_date="+from+"&"+"end_date="+to+"&"+"symbols="+valuta;
+        String params = "?start_date="+from+"&"+"end_date="+to+"&"+"symbols="+valuta+"&"+"places="+4;
         JsonObject result = HttpUtils.fetchJson("https://api.exchangerate.host/fluctuation" +params);
         HashMap val = gson.fromJson(result.get("rates"), HashMap.class);
 

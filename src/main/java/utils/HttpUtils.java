@@ -92,13 +92,10 @@ public class HttpUtils {
       return rateList;
     }
 
-    public static Double convertFromTo(String from, String to) throws IOException {
-        String params = "?from="+from+"&"+"to="+to;
+    public static Double convertFromTo(String from, String to, Double amount) throws IOException {
+        String params = "?from="+from+"&"+"to="+to+"&"+"amount="+amount;
         JsonObject result = HttpUtils.fetchJson("https://api.exchangerate.host/convert"+params);
-
-       Double value = result.get("result").getAsDouble();
-        System.out.println(value);
-        return value;
+        return result.get("result").getAsDouble();
     }
 
 

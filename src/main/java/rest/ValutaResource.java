@@ -50,6 +50,17 @@ public class ValutaResource {
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)
+        @Path("convert/{from}/{to}/{amount}")
+        public Response convertFromTo(
+                @PathParam("from") String from,
+                @PathParam("to") String to,
+                @PathParam("amount") Double amount
+                ) throws IOException {
+                return Response.ok(GSON.toJson(HttpUtils.convertFromTo(from,to,amount))).build();
+        }
+
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
         @Path("{code}")
         public Response getSingleValuta(@PathParam("code")String code) throws IOException {
                 return Response.ok(GSON.toJson(HttpUtils.getSingleValutaValue(code))).build();

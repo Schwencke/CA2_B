@@ -3,16 +3,19 @@ package facades;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dtos.SymbolDTO;
+import dtos.SymbolsDTO;
 import entities.Symbol;
+import org.eclipse.persistence.platform.database.SybasePlatform;
 import utils.HttpUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 
 public class ValutaFacade {
@@ -32,6 +35,17 @@ public class ValutaFacade {
             instance = new ValutaFacade();
         }
         return instance;
+    }
+
+    public SymbolsDTO getAllSymbolsFromDB() throws Exception {
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Symbol> query = em.createQuery("SELECT s from Symbol s", Symbol.class);
+        List<Symbol> list = query.getResultList();
+
+        if (list.isEmpty()){
+            throw new Exception("error");
+        }
+        return new SymbolsDTO(list);
     }
 
     public void updateValutaSymbols() throws IOException {

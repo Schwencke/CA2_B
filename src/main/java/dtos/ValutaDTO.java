@@ -1,30 +1,31 @@
 package dtos;
 
-import java.util.HashMap;
-
 public class ValutaDTO {
 
-    String date;
-    HashMap<String, Double> rates;
+    String code;
+    Double value; //by default the GET return values based on a 100USD
 
-    public ValutaDTO(String date, HashMap<String, Double> rates) {
-        this.date = date;
-        this.rates = rates;
+    public ValutaDTO(String code, Double value) {
+        this.code = code;
+        this.value = value;
     }
 
-    public String getDate() {
-        return date;
+    public ValutaDTO() {
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public String getCode() {
+        return code;
     }
 
-    public HashMap<String, Double> getRates() {
-        return rates;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public void setRates(HashMap<String, Double> rates) {
-        this.rates = rates;
+    public Double getValue() {
+        return value;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
     }
 }

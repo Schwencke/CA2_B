@@ -1,19 +1,19 @@
 package utils;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import dtos.ValutaDTO;
-import dtos.ValutaSymbolDTO;
-import rest.ValutaResource;
 //import dtos.ChuckDTO;
 //import dtos.CombinedDTO;
 //import dtos.DadDTO;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Scanner;
-import java.util.concurrent.*;
 
 public class HttpUtils {
     private static Gson gson = new Gson();
@@ -43,16 +43,34 @@ public class HttpUtils {
 //    }
 
 
-    public static ValutaDTO fetchLatestValutaData() throws IOException {
-        String valuta = fetchData("https://api.exchangerate.host/latest");
-        return HttpUtils.gson.fromJson(valuta, ValutaDTO.class);
+
+
+    public static ValutaDTO getSingleValutaValue(String code) throws IOException {
+        JsonObject valuta = HttpUtils.fetchJson("https://api.exchangerate.host/latest?base=USD&amount=100&symbols="+code);
+        HashMap val = gson.fromJson(valuta.get("rates"), HashMap.class);
+
+        ValutaDTO valutaDTO = new ValutaDTO();
+
+        val.forEach((k,v) -> {
+            String key = k.toString();
+            Double value = Double.parseDouble(v.toString());
+            valutaDTO.setValue(value);
+            valutaDTO.setCode(key);
+        });
+        return valutaDTO;
     }
 
-//    public static ValutaSymbolDTO fetchValutaSymbols() throws IOException {
-//        fetchData("https://api.exchangerate.host/symbols");
-//
-//        return HttpUtils.gson.fromJson(jsonStr, ValutaSymbolDTO.class);
-//    }
+
+    public static JsonObject fetchJson(String _url) throws IOException {
+        URL url = new URL(_url);
+        HttpURLConnection request = (HttpURLConnection) url.openConnection();
+        request.connect();
+
+        JsonParser jp = new JsonParser();
+        JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+        JsonObject jsonobj = root.getAsJsonObject();
+        return jsonobj;
+    }
 
     public static String fetchData(String _url) throws MalformedURLException, IOException {
         URL url = new URL(_url);

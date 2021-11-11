@@ -1,6 +1,8 @@
 package utils;
 
 import com.google.gson.*;
+import dtos.CombinedFluctuationDTO;
+import dtos.FluctuationDTO;
 import dtos.ValutaDTO;
 //import dtos.ChuckDTO;
 //import dtos.CombinedDTO;
@@ -16,6 +18,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class HttpUtils {
     private static Gson gson = new Gson();
@@ -47,6 +53,28 @@ public class HttpUtils {
 //
 //        return new CombinedDTO(chuckDTO, dadDTO);
 //    }
+
+    public static CombinedFluctuationDTO parralellFetch(String valuta1, String valuta2, String from, String to) throws ExecutionException, InterruptedException {
+        ExecutorService es = Executors.newCachedThreadPool();
+        Future<FluctuationDTO> one = es.submit(
+                () -> getFluctuationRates(from,to,valuta1)
+        );
+        Future<FluctuationDTO> two = es.submit(
+                () -> getFluctuationRates(from,to,valuta2)
+        );
+        FluctuationDTO uno = one.get();
+        FluctuationDTO dos = two.get();
+
+        return new CombinedFluctuationDTO(uno,dos);
+    }
+
+    public static FluctuationDTO getFluctuationRates(String from, String to, String valuta)throws IOException{
+        String params = "?start_date="+from+"&"+"end_date="+to+"&"+"symbols="+valuta;
+        JsonObject result = HttpUtils.fetchJson("https://api.exchangerate.host/fluctuation" +params);
+        FluctuationDTO dto = gson.fromJson(result.get("rates"),FluctuationDTO.class);
+
+        return dto;
+    }
 
     public static List<ValutaDTO> getLatestRatesFromBase(String base)throws IOException{
         String params = "?base="+base;

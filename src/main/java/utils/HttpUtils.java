@@ -12,12 +12,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class HttpUtils {
     private static Gson gson = new Gson();
 
+
+    public static void main(String[] args) throws IOException {
+        convertFromTo("USD","DKK");
+    }
 //    public static CombinedDTO fetchDataSequential() throws IOException {
 //        String chuck = HttpUtils.fetchData("https://api.chucknorris.io/jokes/random");
 //        String dad = HttpUtils.fetchData("https://icanhazdadjoke.com");
@@ -42,7 +48,31 @@ public class HttpUtils {
 //        return new CombinedDTO(chuckDTO, dadDTO);
 //    }
 
+    public static List<ValutaDTO> getLatestRatesFromBase(String base)throws IOException{
+        String params = "?base="+base;
+        JsonObject result = HttpUtils.fetchJson("https://api.exchangerate.host/latest" +params);
+        HashMap rates = gson.fromJson(result.get("rates"), HashMap.class);
+        List<ValutaDTO> rateList = new ArrayList<>();
 
+        rates.forEach((k,v) -> {
+            ValutaDTO valutaDTO = new ValutaDTO();
+            String key = k.toString();
+            Double value = Double.parseDouble(v.toString());
+            valutaDTO.setValue(value * 100);
+            valutaDTO.setCode(key);
+            rateList.add(valutaDTO);
+        });
+      return rateList;
+    }
+
+    public static Double convertFromTo(String from, String to) throws IOException {
+        String params = "?from="+from+"&"+"to="+to;
+        JsonObject result = HttpUtils.fetchJson("https://api.exchangerate.host/convert"+params);
+
+       Double value = result.get("result").getAsDouble();
+        System.out.println(value);
+        return value;
+    }
 
 
     public static ValutaDTO getSingleValutaValue(String code) throws IOException {

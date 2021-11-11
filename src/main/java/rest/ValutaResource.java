@@ -1,6 +1,7 @@
 package rest;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import facades.UserFacade;
 import facades.ValutaFacade;
 import utils.EMF_Creator;
@@ -28,13 +29,15 @@ public class ValutaResource {
         @Context
         SecurityContext securityContext;
 
-//        @GET
-//        @Produces(MediaType.APPLICATION_JSON)
-//        @Path("latest")
-//        //@RolesAllowed("user")
-//        public String getAllLatestValuta() throws IOException {
-//            return GSON.toJson(HttpUtils.fetchLatestValutaData());
-//        }
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("latest/{base}")
+        //@RolesAllowed("user")
+        public Response getAllLatestValuta(@PathParam("base") String base) throws IOException {
+                //HttpUtils.fetchData("https://api.exchangerate.host/latest?base=DKK");
+            return Response.ok(GSON.toJson(HttpUtils.getLatestRatesFromBase(base))).build();
+        }
+
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("update/symbols")

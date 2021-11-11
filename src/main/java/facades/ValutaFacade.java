@@ -1,0 +1,61 @@
+package facades;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import entities.Symbol;
+import utils.HttpUtils;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Pattern;
+
+
+public class ValutaFacade {
+
+
+
+    private static EntityManagerFactory emf;
+    private static ValutaFacade instance;
+    private static Gson GSON = new Gson();
+
+    private ValutaFacade() {
+    }
+
+    public static ValutaFacade getValutaFacade(EntityManagerFactory _emf) {
+        if (instance == null) {
+            emf = _emf;
+            instance = new ValutaFacade();
+        }
+        return instance;
+    }
+
+    public void updateValutaSymbols() throws IOException {
+        EntityManager em = emf.createEntityManager();
+        String rawJson = HttpUtils.fetchData("https://api.exchangerate.host/symbols");
+        JsonObject obj = new JsonParser().parse(rawJson).getAsJsonObject();
+        HashMap symbols = GSON.fromJson(obj.get("symbols"), HashMap.class);
+            List<Symbol> ll = new ArrayList<>();
+            em.getTransaction().begin();
+          symbols.forEach((k,v) -> {
+             String[] props = v.toString().split(",");
+             String description = props[0];
+              description = description.replaceAll("description=","");
+              description = description.replace("{","");
+             String code = props[1];
+              code = code.replaceAll("code=","");
+              code = code.replace("}","");
+             Symbol s = new Symbol(code.trim(),description.trim());
+             em.persist(s);
+
+             ll.add(s);
+          });
+
+            em.getTransaction().commit();
+    }
+
+}

@@ -1,6 +1,9 @@
 package utils;
 
 import com.google.gson.Gson;
+import dtos.ValutaDTO;
+import dtos.ValutaSymbolDTO;
+import rest.ValutaResource;
 //import dtos.ChuckDTO;
 //import dtos.CombinedDTO;
 //import dtos.DadDTO;
@@ -39,6 +42,17 @@ public class HttpUtils {
 //        return new CombinedDTO(chuckDTO, dadDTO);
 //    }
 
+
+    public static ValutaDTO fetchLatestValutaData() throws IOException {
+        String valuta = fetchData("https://api.exchangerate.host/latest");
+        return HttpUtils.gson.fromJson(valuta, ValutaDTO.class);
+    }
+
+//    public static ValutaSymbolDTO fetchValutaSymbols() throws IOException {
+//        fetchData("https://api.exchangerate.host/symbols");
+//
+//        return HttpUtils.gson.fromJson(jsonStr, ValutaSymbolDTO.class);
+//    }
 
     public static String fetchData(String _url) throws MalformedURLException, IOException {
         URL url = new URL(_url);

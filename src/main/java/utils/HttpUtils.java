@@ -27,9 +27,6 @@ public class HttpUtils {
     private static Gson gson = new Gson();
 
 
-    public static void main(String[] args) throws IOException {
-        convertFromTo("USD","DKK");
-    }
 //    public static CombinedDTO fetchDataSequential() throws IOException {
 //        String chuck = HttpUtils.fetchData("https://api.chucknorris.io/jokes/random");
 //        String dad = HttpUtils.fetchData("https://icanhazdadjoke.com");
@@ -71,7 +68,9 @@ public class HttpUtils {
     public static FluctuationDTO getFluctuationRates(String from, String to, String valuta)throws IOException{
         String params = "?start_date="+from+"&"+"end_date="+to+"&"+"symbols="+valuta;
         JsonObject result = HttpUtils.fetchJson("https://api.exchangerate.host/fluctuation" +params);
-        FluctuationDTO dto = gson.fromJson(result.get("rates"),FluctuationDTO.class);
+        HashMap val = gson.fromJson(result.get("rates"), HashMap.class);
+
+        FluctuationDTO dto = gson.fromJson(String.valueOf(val.get(valuta)),FluctuationDTO.class);
 
         return dto;
     }

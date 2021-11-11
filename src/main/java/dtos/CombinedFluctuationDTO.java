@@ -9,12 +9,12 @@ public class CombinedFluctuationDTO {
     Double change_pct2;
 
     public CombinedFluctuationDTO(FluctuationDTO uno, FluctuationDTO dos) {
-        this.start_rate1 = uno.getStart_rate();
-        this.end_rate1 = uno.getEnd_rate();
-        this.change_pct1 = uno.getChange_pct();
-        this.start_rate2 = dos.getStart_rate();
-        this.end_rate2 = dos.getEnd_rate();
-        this.change_pct2 = dos.getChange_pct();
+        this.start_rate1 = uno.getStart_rate() *100;
+        this.end_rate1 = uno.getEnd_rate() *100;
+        this.change_pct1 = uno.getChange_pct() *100;
+        this.start_rate2 = dos.getStart_rate() *100;
+        this.end_rate2 = dos.getEnd_rate() *100;
+        this.change_pct2 = dos.getChange_pct() *100;
     }
 
     public Double getStart_rate1() {

@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.lang.reflect.ReflectPermission;
+import java.util.concurrent.ExecutionException;
 
 @Path("valuta")
 public class ValutaResource {
@@ -61,14 +62,17 @@ public class ValutaResource {
         return Response.ok(VALUTA_FACADE.getAllSymbolsFromDB()).build();
         }
 
-//        @GET
-//        @Produces(MediaType.APPLICATION_JSON)
-//        @Path("admin")
-//        @RolesAllowed("admin")
-//        public String getCatPictureForAdmin() throws IOException {
-//
-//            return GSON.toJson(HttpUtils.fetchData("https://dog-api.kinduff.com/api/facts"));
-//        }
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
+        @Path("{from}/{to}/{valuta1}/{valuta2}")
+        //@RolesAllowed("admin")
+        public Response getParralelleData(
+                @PathParam("from") String from,
+                @PathParam("to") String to,
+                @PathParam("valuta1") String valuta1,
+                @PathParam("valuta2") String valuta2) throws IOException, ExecutionException, InterruptedException {
+            return Response.ok(GSON.toJson(HttpUtils.parralellFetch(valuta1,valuta2,from,to))).build();
+        }
     }
 
 

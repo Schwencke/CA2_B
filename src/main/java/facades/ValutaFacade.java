@@ -10,6 +10,8 @@ import entities.Symbol;
 import org.eclipse.persistence.platform.database.SybasePlatform;
 import org.jsoup.select.Elements;
 import utils.HttpUtils;
+
+import javax.enterprise.inject.Typed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
@@ -36,6 +38,15 @@ public class ValutaFacade {
             instance = new ValutaFacade();
         }
         return instance;
+    }
+
+    public Flag getFlagByCode(String code){
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Flag> query = em.createQuery("select f from Flag f where f.code = :code", Flag.class);
+        query.setParameter("code", code);
+        Flag flag;
+        flag = query.getSingleResult();
+        return flag;
     }
 
     public void persistFlags(HashMap<String, Elements> flags){

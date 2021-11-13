@@ -49,13 +49,13 @@ public class ValutaFacade {
         return flag;
     }
 
-    public void persistFlags(HashMap<String, Elements> flags){
+    public void persistFlags(HashMap<String, String> flags){
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         flags.forEach((k,v) -> {
             Flag flag = new Flag();
             flag.setCode(k);
-            flag.setSvg(v.toString());
+            flag.setSvg(v);
             em.persist(flag);
         });
         em.getTransaction().commit();

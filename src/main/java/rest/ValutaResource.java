@@ -27,10 +27,10 @@ public class ValutaResource {
         @Context
         SecurityContext securityContext;
 
-//        @POST
-//        public void scrabeFlags() throws Exception {
-//                HttpUtils.iconScraber();
-//        }
+        @POST
+        public void scrabeFlags() throws Exception {
+                HttpUtils.iconScraber();
+        }
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)

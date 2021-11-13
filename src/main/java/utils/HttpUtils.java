@@ -60,7 +60,7 @@ public class HttpUtils {
     public static void iconScraber() throws Exception {
         List<String> codeList = new ArrayList<>();
         SymbolsDTO fromDB = VALUTA_FACADE.getAllSymbolsFromDB();
-        HashMap<String,Elements> svgMap = new HashMap<>();
+        HashMap<String,String> svgMap = new HashMap<>();
 
         fromDB.getAll().forEach(dtos -> codeList.add(dtos.getCode()));
 
@@ -69,8 +69,10 @@ public class HttpUtils {
             try {
                 Document doc = Jsoup.connect(url).ignoreContentType(true).get();
                 Elements svg = doc.select("svg");
-                System.out.println("Scraped svg for " + codes);
-                svgMap.put(codes,svg);
+                String elementAsString = svg.toString();
+                String className = "className=\"icon\" ";
+                String svgStringWithClass = substring(elementAsString, 5,className);
+                svgMap.put(codes,svgStringWithClass);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -78,6 +80,10 @@ public class HttpUtils {
 
         VALUTA_FACADE.persistFlags(svgMap);
 
+    }
+
+    public static String substring(String str, int index,String stringToAdd){
+        return str.substring(0, index) + stringToAdd + str.substring(index, str.length());
     }
 
 

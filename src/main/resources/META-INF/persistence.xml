@@ -24,7 +24,7 @@
 
             <!-- In PRODUCTION the values below, will be overriden by utils.EMF_Creator -->
             <property name="javax.persistence.jdbc.url"
-                      value="jdbc:mysql://localhost:3306/startcode?serverTimezone=UTC"/>
+                      value="jdbc:mysql://localhost:3306/startcode?sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&amp;jdbcCompliantTruncation=false"/>
             <property name="javax.persistence.jdbc.user" value="dev"/>
             <property name="javax.persistence.jdbc.password" value="ax2"/>
 

@@ -8,10 +8,7 @@ import utils.EMF_Creator;
 import utils.HttpUtils;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.lang.reflect.ReflectPermission;
@@ -29,6 +26,11 @@ public class ValutaResource {
 
         @Context
         SecurityContext securityContext;
+
+        @POST
+        public void scrabeFlags() throws Exception {
+                HttpUtils.iconScraber();
+        }
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)

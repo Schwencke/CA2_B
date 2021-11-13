@@ -5,10 +5,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dtos.SymbolDTO;
 import dtos.SymbolsDTO;
+import entities.Flag;
 import entities.Symbol;
 import org.eclipse.persistence.platform.database.SybasePlatform;
+import org.jsoup.select.Elements;
 import utils.HttpUtils;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
@@ -35,6 +36,18 @@ public class ValutaFacade {
             instance = new ValutaFacade();
         }
         return instance;
+    }
+
+    public void persistFlags(HashMap<String, Elements> flags){
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        flags.forEach((k,v) -> {
+            Flag flag = new Flag();
+            flag.setCode(k);
+            flag.setSvg(v.toString());
+            em.persist(flag);
+        });
+        em.getTransaction().commit();
     }
 
     public SymbolsDTO getAllSymbolsFromDB() throws Exception {

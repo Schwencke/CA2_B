@@ -3,11 +3,14 @@ package utils;
 import com.google.gson.*;
 import dtos.CombinedFluctuationDTO;
 import dtos.FluctuationDTO;
+import dtos.SymbolsDTO;
 import dtos.ValutaDTO;
-//import dtos.ChuckDTO;
-//import dtos.CombinedDTO;
-//import dtos.DadDTO;
-
+import entities.Symbol;
+import facades.ValutaFacade;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +28,9 @@ import java.util.concurrent.Future;
 
 public class HttpUtils {
     private static Gson gson = new Gson();
+
+    private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
+    public static final ValutaFacade VALUTA_FACADE = ValutaFacade.getValutaFacade(EMF);
 
 
 //    public static CombinedDTO fetchDataSequential() throws IOException {
@@ -50,6 +56,30 @@ public class HttpUtils {
 //
 //        return new CombinedDTO(chuckDTO, dadDTO);
 //    }
+
+    public static void iconScraber() throws Exception {
+        List<String> codeList = new ArrayList<>();
+        SymbolsDTO fromDB = VALUTA_FACADE.getAllSymbolsFromDB();
+        HashMap<String,Elements> svgMap = new HashMap<>();
+
+        fromDB.getAll().forEach(dtos -> codeList.add(dtos.getCode()));
+
+        codeList.forEach(codes -> {
+            String url = "https://www.valutakurser.dk/images/flags/"+codes+".svg";
+            try {
+                Document doc = Jsoup.connect(url).ignoreContentType(true).get();
+                Elements svg = doc.select("svg");
+                System.out.println("Scraped svg for " + codes);
+                svgMap.put(codes,svg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        VALUTA_FACADE.persistFlags(svgMap);
+
+    }
+
 
     public static CombinedFluctuationDTO parralellFetch(String valuta1, String valuta2, String from, String to) throws ExecutionException, InterruptedException {
         ExecutorService es = Executors.newCachedThreadPool();

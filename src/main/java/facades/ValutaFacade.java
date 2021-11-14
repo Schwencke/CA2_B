@@ -49,6 +49,14 @@ public class ValutaFacade {
         return flag;
     }
 
+    public List<Flag> getFlags() {
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Flag> query = em.createQuery("select f from Flag f", Flag.class);
+        List<Flag> flaglist;
+        flaglist = query.getResultList();
+        return flaglist;
+    }
+
     public void persistFlags(HashMap<String, String> flags){
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -95,5 +103,6 @@ public class ValutaFacade {
 
             em.getTransaction().commit();
     }
+
 
 }

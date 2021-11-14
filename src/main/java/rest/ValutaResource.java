@@ -41,6 +41,13 @@ public class ValutaResource {
 
         @GET
         @Produces(MediaType.APPLICATION_JSON)
+        @Path("flags")
+        public Response getFlagByCode(){
+                return Response.ok(GSON.toJson(VALUTA_FACADE.getFlags())).build();
+        }
+
+        @GET
+        @Produces(MediaType.APPLICATION_JSON)
         @Path("latest/{base}")
         //@RolesAllowed("user")
         public Response getAllLatestValuta(@PathParam("base") String base) throws IOException {

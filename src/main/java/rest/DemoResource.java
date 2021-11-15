@@ -56,7 +56,7 @@ public class DemoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("user")
-//    @RolesAllowed("user")
+    @RolesAllowed("user")
     public String getFromUser() {
         String thisuser = securityContext.getUserPrincipal().getName();
         return "{\"msg\": \"Hello to User: " + thisuser + "\"}";

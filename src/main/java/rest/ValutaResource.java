@@ -35,6 +35,7 @@ public class ValutaResource {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("flags/{code}")
+        @RolesAllowed("user")
         public Response getFlagByCode(@PathParam("code")String code){
                 return Response.ok(GSON.toJson(VALUTA_FACADE.getFlagByCode(code))).build();
         }
@@ -42,6 +43,7 @@ public class ValutaResource {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("flags")
+        @RolesAllowed("user")
         public Response getFlagByCode(){
                 return Response.ok(GSON.toJson(VALUTA_FACADE.getFlags())).build();
         }
@@ -49,7 +51,7 @@ public class ValutaResource {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("latest/{base}")
-        //@RolesAllowed("user")
+        @RolesAllowed("user")
         public Response getAllLatestValuta(@PathParam("base") String base) throws IOException {
                 //HttpUtils.fetchData("https://api.exchangerate.host/latest?base=DKK");
             return Response.ok(GSON.toJson(HttpUtils.getLatestRatesFromBase(base))).build();
@@ -58,7 +60,7 @@ public class ValutaResource {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("update/symbols")
-        //@RolesAllowed("user")
+        @RolesAllowed("user")
         public Response updateValutaSymbols() throws IOException {
                 VALUTA_FACADE.updateValutaSymbols();
                 return Response.ok().build();
@@ -67,6 +69,7 @@ public class ValutaResource {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("convert/{from}/{to}/{amount}")
+        @RolesAllowed("user")
         public Response convertFromTo(
                 @PathParam("from") String from,
                 @PathParam("to") String to,
@@ -78,6 +81,7 @@ public class ValutaResource {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("{code}")
+        @RolesAllowed("user")
         public Response getSingleValuta(@PathParam("code")String code) throws IOException {
                 return Response.ok(GSON.toJson(HttpUtils.getSingleValutaValue(code))).build();
         }
@@ -85,21 +89,22 @@ public class ValutaResource {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         @Path("symbols")
+        @RolesAllowed("user")
         public Response getAllValutaSumbols() throws Exception {
         return Response.ok(VALUTA_FACADE.getAllSymbolsFromDB()).build();
         }
 
-        @GET
-        @Produces(MediaType.APPLICATION_JSON)
-        @Path("{from}/{to}/{valuta1}/{valuta2}")
-        //@RolesAllowed("admin")
-        public Response getParralelleData(
-                @PathParam("from") String from,
-                @PathParam("to") String to,
-                @PathParam("valuta1") String valuta1,
-                @PathParam("valuta2") String valuta2) throws IOException, ExecutionException, InterruptedException {
-            return Response.ok(GSON.toJson(HttpUtils.parralellFetch(valuta1,valuta2,from,to))).build();
-        }
+//        @GET
+//        @Produces(MediaType.APPLICATION_JSON)
+//        @Path("{from}/{to}/{valuta1}/{valuta2}")
+//        //@RolesAllowed("admin")
+//        public Response getParralelleData(
+//                @PathParam("from") String from,
+//                @PathParam("to") String to,
+//                @PathParam("valuta1") String valuta1,
+//                @PathParam("valuta2") String valuta2) throws IOException, ExecutionException, InterruptedException {
+//            return Response.ok(GSON.toJson(HttpUtils.parralellFetch(valuta1,valuta2,from,to))).build();
+//        }
     }
 
 

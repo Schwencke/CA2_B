@@ -1,14 +1,13 @@
 package utils;
 
 import com.google.gson.*;
-import dtos.CombinedFluctuationDTO;
 import dtos.FluctuationDTO;
 import dtos.SymbolsDTO;
 import dtos.ValutaDTO;
-import entities.Symbol;
 import facades.ValutaFacade;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
@@ -17,14 +16,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.*;
 
 public class HttpUtils {
     private static Gson gson = new Gson();
@@ -32,6 +24,9 @@ public class HttpUtils {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     public static final ValutaFacade VALUTA_FACADE = ValutaFacade.getValutaFacade(EMF);
 
+    public static void main(String[] args) throws IOException {
+        histogram("2020-01-01", "2020-12-12","EUR");
+    }
 
 //    public static CombinedDTO fetchDataSequential() throws IOException {
 //        String chuck = HttpUtils.fetchData("https://api.chucknorris.io/jokes/random");
@@ -56,6 +51,18 @@ public class HttpUtils {
 //
 //        return new CombinedDTO(chuckDTO, dadDTO);
 //    }
+
+    public static void histogram(String from, String to, String valuta)throws IOException{
+        String params = "?start_date="+from+"&"+"end_date="+to+"&"+"symbols=DKK"+"&"+"base="+valuta+"&"+"amount="+100;
+        JsonObject result = HttpUtils.fetchJson("https://api.exchangerate.host/timeseries" +params);
+        JsonElement val = result.get("rates");
+        System.out.println(val);
+
+        for(Map.Entry<String, JsonElement> entry : result.entrySet()){
+            System.out.println("key=" +entry.getKey() + "value=" +entry.getValue());
+        }
+
+    }
 
     public static void iconScraber() throws Exception {
         List<String> codeList = new ArrayList<>();
@@ -86,20 +93,6 @@ public class HttpUtils {
         return str.substring(0, index) + stringToAdd + str.substring(index, str.length());
     }
 
-
-    public static CombinedFluctuationDTO parralellFetch(String valuta1, String valuta2, String from, String to) throws ExecutionException, InterruptedException {
-        ExecutorService es = Executors.newCachedThreadPool();
-        Future<FluctuationDTO> one = es.submit(
-                () -> getFluctuationRates(from,to,valuta1)
-        );
-        Future<FluctuationDTO> two = es.submit(
-                () -> getFluctuationRates(from,to,valuta2)
-        );
-        FluctuationDTO uno = one.get();
-        FluctuationDTO dos = two.get();
-
-        return new CombinedFluctuationDTO(uno,dos);
-    }
 
     public static FluctuationDTO getFluctuationRates(String from, String to, String valuta)throws IOException{
         String params = "?start_date="+from+"&"+"end_date="+to+"&"+"symbols="+valuta+"&"+"places="+4;
